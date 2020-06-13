@@ -9,9 +9,10 @@ sample_task:
         image: rustlang/rust:nightly
   cargo_cache:
     folder: $CARGO_HOME/registry
-    fingerprint_script: cat Cargo.lock
-  build_script: cargo build
-  test_script: cargo test
-  lint_script:
+  build_script: cargo build --verbose
+  test_script: cargo test --verbose
+  clippy_script:
+    - rustup update
+    - rustup component add clippy
     - cargo clippy --all-targets --all-features -- -D warnings
   before_cache_script: rm -rf $CARGO_HOME/registry/index
