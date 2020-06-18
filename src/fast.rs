@@ -18,7 +18,7 @@ pub struct FASTDetector {
 /**
  * Values that a neighboring pixel can have compared to the central pixel that we check
  */
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 enum ComparedToCentre {
     InBounds,
     Black,
@@ -111,19 +111,25 @@ impl FASTDetector {
             })
             .collect();
 
-        let neighbor_tags: Vec<ComparedToCentre> = neighbor_vals
+        let mut neighbor_tags: Vec<ComparedToCentre> = neighbor_vals
             .iter()
-            .cloned()
             .map(|n_val| -> ComparedToCentre {
-                if self.is_black(p, n_val) {
+                if self.is_black(p, *n_val) {
                     ComparedToCentre::Black
-                } else if self.is_white(p, n_val) {
+                } else if self.is_white(p, *n_val) {
                     ComparedToCentre::White
                 } else {
                     ComparedToCentre::InBounds
                 }
             })
             .collect();
+
+        // repeat the first min_contig_neighbors elements so that you can loop until the very last
+        // element of the neighbor_tags
+        neighbor_tags.extend(neighbor_tags[..self.params.min_contig_neighbors as usize].to_vec());
+        let mut neighbor_tags_extended = neighbor_tags.clone();
+        neighbor_tags_extended
+            .extend(neighbor_tags[..self.params.min_contig_neighbors as usize].to_vec());
 
         let corner_masks = [
             vec![ComparedToCentre::Black; self.params.min_contig_neighbors as usize],
@@ -135,7 +141,9 @@ impl FASTDetector {
         // you have to loop over - TODO Use circular buffer here
         for i in 0..neighbor_tags.len() {
             for mask in corner_masks.iter() {
-                if neighbor_tags[i .. i + self.params.min_contig_neighbors as usize] == mask[..] {
+                if neighbor_tags_extended[i..i + self.params.min_contig_neighbors as usize]
+                    == mask[..]
+                {
                     return true;
                 }
             }
