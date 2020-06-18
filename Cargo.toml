@@ -1,5 +1,5 @@
 [package]
-name = "cv-detectors-rs"
+name = "cv-detectors"
 version = "0.1.0"
 authors = ["Nikos Koukis <nickkouk@gmail.com>"]
 edition = "2018"
@@ -15,6 +15,11 @@ keywords = [
 ]
 categories = ["algorithms", "science::robotics"]
 publish = true
+exclude = [
+    "examples/*",
+]
+
+
 
 [badges]
 
@@ -23,4 +28,14 @@ cirrus-ci = { repository = "cv-detectors-rs", branch = "master" }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+log = "0.4.8"
 image = "^0.23.4"
+nalgebra = "0.21.1"
+rand = "*"
+
+# [[examples]]
+# path = "examples/detect.rs"
+# name = "detect"
+# harness = false
+
+
