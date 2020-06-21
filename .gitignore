@@ -37,6 +37,7 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/rust,vim
 
+/a.rs
 /a
 rusty-tags.vi
-image_with_features.jpg
+image_with_features*.jpg
